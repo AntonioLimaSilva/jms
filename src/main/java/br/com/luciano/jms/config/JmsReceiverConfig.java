@@ -12,15 +12,15 @@ import javax.jms.Queue;
 
 @Configuration
 @EnableJms
-public class JmsConfig {
+public class JmsReceiverConfig {
 
-    @Value("${spring.activemq.broker-url}")
+    @Value("${activemq.broker-url}")
     private String brokerUrl;
 
-    @Bean
-    public Queue queue() {
-        return new ActiveMQQueue("simple-jms-queue");
-    }
+//    @Bean
+//    public Queue queue() {
+//        return new ActiveMQQueue("simple-jms-queue");
+//    }
 
     @Bean
     public ActiveMQConnectionFactory receiverActiveMQConnectionFactory() {
@@ -31,10 +31,10 @@ public class JmsConfig {
     }
 
     @Bean
-    public DefaultJmsListenerContainerFactory jmsActivationSpecFactory() {
+    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
         DefaultJmsListenerContainerFactory jmsListenerContainerFactory = new DefaultJmsListenerContainerFactory();
         jmsListenerContainerFactory.setConnectionFactory(receiverActiveMQConnectionFactory());
-
+        jmsListenerContainerFactory.setConcurrency("3-10");
         return jmsListenerContainerFactory;
     }
 
