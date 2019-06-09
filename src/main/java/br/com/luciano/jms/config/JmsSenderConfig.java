@@ -9,6 +9,7 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 
 import javax.jms.Destination;
+import javax.jms.Queue;
 
 @Configuration
 public class JmsSenderConfig {
@@ -16,13 +17,15 @@ public class JmsSenderConfig {
     @Value("${activemq.broker-url}")
     private String brokerUrl;
 
-    @Value("${activemp.queue-destination}")
-    private String queueDestination;
+    @Value("${activemp.queue-prod}")
+    private String queueDev;
+
+    @Value("${activemp.queue-dev}")
+    private String queueProd;
 
     @Bean
     public ActiveMQConnectionFactory senderConnectionFactory() {
-        ActiveMQConnectionFactory activeMQConnectionFactory =
-                new ActiveMQConnectionFactory();
+        ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory();
         activeMQConnectionFactory.setBrokerURL(brokerUrl);
 
         return activeMQConnectionFactory;
@@ -30,22 +33,26 @@ public class JmsSenderConfig {
 
     @Bean
     public CachingConnectionFactory cachingConnectionFactory() {
-        CachingConnectionFactory cachingConnectionFactory =
-                new CachingConnectionFactory(senderConnectionFactory());
+        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(senderConnectionFactory());
         cachingConnectionFactory.setSessionCacheSize(10);
 
         return cachingConnectionFactory;
     }
 
     @Bean
-    public Destination queueDestination() {
-        return new ActiveMQQueue(queueDestination);
+    public Destination destination() {
+        return new ActiveMQQueue(queueDev);
+    }
+
+    @Bean
+    public Queue queue() {
+        return new ActiveMQQueue(queueProd);
     }
 
     @Bean
     public JmsTemplate queueJmsTemplate() {
         JmsTemplate jmsTemplate = new JmsTemplate(cachingConnectionFactory());
-        jmsTemplate.setDefaultDestination(queueDestination());
+        jmsTemplate.setDefaultDestination(destination());
         jmsTemplate.setReceiveTimeout(5000);
 
         return jmsTemplate;

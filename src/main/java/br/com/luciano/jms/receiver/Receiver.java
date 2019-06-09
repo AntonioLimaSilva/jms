@@ -1,13 +1,17 @@
 package br.com.luciano.jms.receiver;
 
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.annotation.JmsListeners;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Receiver {
 
-    @JmsListener(destination = "simple-jms-queue")
-    public void listener(String msg) {
+    @JmsListeners({
+            @JmsListener(destination = "queue.dev"),
+            @JmsListener(destination = "queue.prod")
+    })
+    public void reveiver(String msg) {
         System.out.println("Received Message : " + msg);
     }
 

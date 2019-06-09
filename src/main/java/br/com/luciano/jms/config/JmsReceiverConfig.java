@@ -17,11 +17,6 @@ public class JmsReceiverConfig {
     @Value("${activemq.broker-url}")
     private String brokerUrl;
 
-//    @Bean
-//    public Queue queue() {
-//        return new ActiveMQQueue("simple-jms-queue");
-//    }
-
     @Bean
     public ActiveMQConnectionFactory receiverActiveMQConnectionFactory() {
         ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory();
